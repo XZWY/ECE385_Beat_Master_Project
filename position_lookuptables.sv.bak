@@ -1,0 +1,18 @@
+module x1_lookup
+(
+input logic[9:0] y_position,
+output logic[9:0] x_position
+);
+
+always_comb
+		case(y_position)
+				
+		
+		
+		endcase
+
+
+end
+
+
+endmodule

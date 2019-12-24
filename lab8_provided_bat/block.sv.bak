@@ -1,0 +1,110 @@
+module block
+(
+				input logic Clk,
+				input logic frame_clk,
+				input logic start,
+				input logic[7:0] keycode,
+				input logic[2:0] position,
+				input logic[9:0] draw_x, draw_y,
+				output logic active,
+				output logic is_block,
+				output logic hit
+);
+				
+				parameter [7:0] key_A = 8'h04;
+				parameter [7:0] key_S = 8'h16;
+				parameter [7:0] key_D = 8'h07;
+				parameter [7:0] key_F = 8'h09;
+				
+				
+				parameter[179:0] notes = 180'h9F9B99A99999999999999999999999999999999999999;
+				
+				parameter [9:0] bottom_start = 10'd417;
+				parameter [9:0] bottom_end = 10'd440;
+
+
+				parameter [9:0] top_first = 10'd120;
+				parameter [9:0] top_second = 10'd230;
+				parameter [9:0] top_third = 10'd318;
+				parameter [9:0] top_fourth = 10'd420;				
+				
+//				parameter [9:0] middle_first = 10'd;
+//				parameter [9:0] middle_second = 10'd;
+//				parameter [9:0] middle_third = 10'd;
+//				parameter [9:0] middle_fourth = 10'd;		
+				
+				parameter [9:0] step_size = 10'd2;
+				
+				parameter [9:0] block_width = 10'd68;
+				parameter [9:0] block_height = 10'd11;
+				
+	 logic [7:0] correct_keycode;
+	 logic [9:0] block_X_Pos, block_Y_Pos;
+    logic [9:0] block_Y_Pos_in;
+				
+	 logic[7:0] counter, counter_in;
+				
+
+				
+always_comb begin
+		case(position)
+			3'd0 : begin block_X_Pos =     top_first;   correct_keycode = key_A; end
+			3'b1 : begin block_X_Pos =    top_second;   correct_keycode = key_A; end
+			3'd2 : begin block_X_Pos =     top_third;   correct_keycode = key_S; end
+			3'd3 : begin block_X_Pos =    top_fourth;   correct_keycode = key_S; end
+			3'd4 : begin block_X_Pos =     top_first;   correct_keycode = key_D; end
+			3'd5 : begin block_X_Pos =    top_second;   correct_keycode = key_D; end
+			3'd6 : begin block_X_Pos =     top_third;   correct_keycode = key_F; end
+			3'd7 : begin block_X_Pos =    top_fourth;   correct_keycode = key_F; end
+		endcase
+end
+
+logic frame_clk_delayed, frame_clk_rising_edge;
+
+always_ff @ (posedge Clk) begin
+    frame_clk_delayed <= frame_clk;
+    frame_clk_rising_edge <= (frame_clk == 1'b1) && (frame_clk_delayed == 1'b0);
+end
+
+always_ff @(posedge Clk) begin
+		if (start) begin
+			counter <= 0;
+			if (position < 3'd4)
+				block_Y_Pos = 0;
+			else 
+				block_Y_Pos = 1;
+		end
+		block_Y_Pos <= block_Y_Pos_in;
+end
+
+always_comb begin
+		if ((draw_x >= block_X_Pos) && (draw_x <= block_X_Pos + block_width) && (draw_y >= block_Y_Pos) && (draw_y <= block_Y_Pos + block_height))
+				is_block = 1'b1;
+				if (keycode == correct_keycode && block_Y_Pos < )
+		else 
+				is_block = 1'b0;
+end
+
+always_comb begin
+		hit = 1'b0;
+		counter_in = counter;
+		block_Y_Pos_in = block_Y_Pos;
+		active = notes[counter];
+		if (frame_clk_rising_edge) begin
+				block_Y_Pos_in = block_Y_Pos + step_size;
+				if ((block_Y_Pos < bottom_end) && (block_Y_Pos > bottom_start)) begin
+						if (counter != 8'd179)
+							counter_in = counter + 1;
+						else 
+							counter_in = 8'b0;
+						if (keycode == correct_keycode) begin
+							hit = 1'b1;
+						end
+				end
+				else if (block_Y_Pos > bottom_end) begin
+						active = 0;
+				end
+		end
+end
+				
+endmodule

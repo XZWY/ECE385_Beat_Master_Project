@@ -1,0 +1,23 @@
+module audio_FSM
+(
+input logic clk, start,
+output logic[21:0] flash_addr
+);
+
+logic[25:0] sample_counter, sample_counter_in;
+logic[11:0] clk_counter, clk_counter_in;
+
+always_ff @(posedge clk) begin
+		sample_counter = sample_counter_in;
+		clk_counter = clk_counter_in;
+end
+
+always_comb begin
+		if ((start == 1'b1) || (clk_counter = 12'd1133))
+			clk_counter_in = 12'b0;
+		else
+			clk_counter_in = clk_counter + 12'b1;
+end
+
+
+endmodule

@@ -1,0 +1,19 @@
+module  palette (
+						  input logic clk,
+						  input  logic  [3:0] data,
+                    output logic [23:0] RGB // VGA RGB output
+                    );
+    
+
+    
+
+    always_ff @(posedge clk) begin
+			case (data)
+			8'd0:  RGB <= 24'h000000; 	   	8'd1:  RGB <= 24'h5f8700;    	8'd2: RGB <= 24'haf00d7;    	8'd3: RGB <= 24'hd7ff87;
+			8'd4:  RGB <= 24'h800000;  	  	8'd5:  RGB <= 24'h5f875f;    	8'd6: RGB <= 24'haf00ff;    	8'd7: RGB <= 24'hd7ffaf;
+			8'd8:  RGB <= 24'h800000;			8'd9:  RGB <= 24'h800000;		8'd10:  RGB <= 24'h800000;		8'd11:  RGB <= 24'h800000;
+			8'd12:  RGB <= 24'h800000;			8'd13:  RGB <= 24'h800000;		8'd14:  RGB <= 24'h800000;		8'd15:  RGB <= 24'h800000;
+			endcase
+    end 
+    
+endmodule

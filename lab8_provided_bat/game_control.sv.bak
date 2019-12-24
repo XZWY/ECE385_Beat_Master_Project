@@ -1,0 +1,42 @@
+module game_control
+(
+						 input logic reset,
+						 input logic clk,
+						 input logic[7:0] keycode,
+						 output logic is_menu,
+						 output logic is_start
+);
+
+				parameter [7:0] key_reset = 8'h29;
+				parameter [7:0] key_one   = 8'h1e;
+//				parameter [7:0] key_two   = 8'h1f;
+//				parameter [7:0] key_three = 8'h20;
+
+enum logic[1:0]{menu, start, play} state, next_state;
+
+always_ff @(posedge clk) begin
+		if (reset) state <= menu;
+		state <= next_state;
+end
+
+always_comb begin
+		is_menu = 1'b0;
+		is_start = 1'b0;
+		next_state = state;
+		case(state)
+				menu : begin
+							if(keycode == key_one) next_state = start;
+						 end
+				start : next_state = play;
+				play : begin
+							if (keycode == key_reset) next_state = menu;
+						 end
+		endcase
+		
+		case(state)
+				menu : is_menu = 1'b1;
+				start : is_start = 1'b1;
+		endcase
+end		
+
+endmodule
