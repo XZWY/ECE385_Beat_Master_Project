@@ -1,4 +1,4 @@
-# ECE385 Project Beat Dance
+# ECE385 Project Beat Master
 This game is similar with Guitar Hero and is mostly written in SystemVerilog to be instantiated on an FPGA.
 The instantitation detail can be viewed from the report. All game functions are implemented in pure hardware.
 Author: Zhongweiyang Xu
